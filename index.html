@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b0b0b">
+<title>TradeLog — Jurnal Trading Gratis</title>
+<style>
+:root{--bg:#080808;--panel:#111;--panel2:#171717;--line:#2b2b2b;--gold:#d9aa57;--text:#f4f1ea;--muted:#999;--green:#40b995;--red:#e06c75}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{padding:24px 18px 20px;border-bottom:1px solid var(--line);background:linear-gradient(120deg,#171206,#090909 60%)}.wrap{max-width:1050px;margin:auto}
+.brand{font-size:32px;font-weight:850;letter-spacing:-1px}.brand span{color:var(--gold)}.sub{color:#aaa;letter-spacing:4px;font-size:11px;font-weight:700}.intro{color:#bbb;margin:14px 0 0}
+main{max-width:1050px;margin:18px auto;padding:0 14px 40px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}.stat,.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px}.stat small{display:block;color:var(--muted);font-size:11px;letter-spacing:1.4px;text-transform:uppercase}.stat strong{display:block;font-size:23px;margin-top:5px;overflow-wrap:anywhere}.positive{color:var(--green)!important}.negative{color:var(--red)!important}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}.panel h2{font-size:22px;margin:0 0 4px}.hint{color:var(--muted);margin:0 0 16px}.field{margin:12px 0}.field label,.label{display:block;color:#aaa;font-size:11px;letter-spacing:2px;font-weight:750;margin-bottom:6px;text-transform:uppercase}
+input,select,textarea{width:100%;background:#090909;color:var(--text);border:1px solid #303030;border-radius:10px;padding:12px;font:inherit;outline:none}input:focus,select:focus,textarea:focus{border-color:var(--gold)}textarea{resize:vertical;min-height:75px}
+.options{display:grid;gap:7px}.two{grid-template-columns:repeat(2,1fr)}.three{grid-template-columns:repeat(3,1fr)}.pick{position:relative}.pick input{position:absolute;opacity:0;width:1px;height:1px}.pick span{display:block;text-align:center;padding:10px 4px;background:#090909;border:1px solid #303030;border-radius:10px;color:#aaa;font-weight:700;cursor:pointer}.pick input:checked+span{border-color:var(--gold);color:var(--gold);box-shadow:inset 0 0 0 1px #8b6a36}
+button{border:0;border-radius:10px;padding:12px 16px;font:inherit;font-weight:800;cursor:pointer}.primary{background:var(--gold);color:#191208;width:100%;margin-top:8px}.secondary{background:#222;color:#eee;border:1px solid #383838}.danger{background:#2b1516;color:#ffb4b8;border:1px solid #5a292d}.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.btnrow button{flex:1}
+.checks{display:grid;gap:9px}.checks label{display:flex;gap:9px;align-items:flex-start;color:#ccc;font-size:14px}.checks input{width:17px;height:17px;accent-color:var(--gold);margin-top:3px}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:18px 0 10px}.toolbar input{flex:1;min-width:140px}.toolbar select{width:auto;min-width:120px}.trade{border:1px solid var(--line);border-radius:12px;padding:13px;margin-top:9px;background:#0c0c0c}.tradehead{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.tradehead strong{font-size:16px}.pill{display:inline-block;border-radius:999px;padding:3px 9px;font-size:11px;font-weight:800;background:#202020;color:#bbb}.pill.tp{background:#12352b;color:#65d8b5}.pill.sl{background:#391a1e;color:#ff9aa2}.trade p{margin:8px 0 0;color:#aaa;font-size:13px;white-space:pre-wrap}.trade .meta{color:#888;font-size:12px;margin-top:5px}.empty{color:#888;text-align:center;padding:25px 5px}.section-title{display:flex;justify-content:space-between;align-items:center;gap:8px}.foot{color:#777;text-align:center;font-size:12px;margin-top:20px}
+@media(max-width:720px){.stats{grid-template-columns:repeat(2,1fr)}.layout{grid-template-columns:1fr}.brand{font-size:29px}main{padding:0 10px 30px}.stat{padding:13px}.stat strong{font-size:21px}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><div class="brand">TradeLog<span>.</span></div><div class="sub">JURNAL TRADING · GRATIS</div><p class="intro">Catat setiap trade, evaluasi hasil, dan jaga disiplin. Data tersimpan di browser perangkat ini.</p></div></header>
+<main>
+<div class="stats">
+ <div class="stat"><small>Total trade</small><strong id="sTotal">0</strong></div>
+ <div class="stat"><small>Winrate</small><strong id="sWin">0%</strong></div>
+ <div class="stat"><small>Total PnL ($)</small><strong id="sPnl">$0.00</strong></div>
+ <div class="stat"><small>Disiplin hari ini</small><strong id="sDis">0/5</strong></div>
+</div>
+<div class="layout">
+<section class="panel">
+<h2>Catat trade</h2><p class="hint">Isi detail trading setelah posisi ditutup.</p>
+<form id="tradeForm">
+<div class="field"><label for="date">Tanggal</label><input id="date" type="date" required></div>
+<div class="field"><label for="pair">Pair / instrumen</label><input id="pair" value="XAUUSD" placeholder="Contoh: EURUSD, XAUUSD" required></div>
+<div class="field"><span class="label">Arah</span><div class="options two">
+<label class="pick"><input type="radio" name="direction" value="Long" checked><span>Long / Buy</span></label>
+<label class="pick"><input type="radio" name="direction" value="Short"><span>Short / Sell</span></label></div></div>
+<div class="field"><span class="label">Sesi</span><div class="options three">
+<label class="pick"><input type="radio" name="session" value="Asia"><span>Asia</span></label>
+<label class="pick"><input type="radio" name="session" value="London" checked><span>London</span></label>
+<label class="pick"><input type="radio" name="session" value="New York"><span>New York</span></label></div></div>
+<div class="field"><span class="label">Hasil</span><div class="options two">
+<label class="pick"><input type="radio" name="result" value="TP" checked><span>Take Profit</span></label>
+<label class="pick"><input type="radio" name="result" value="SL"><span>Stop Loss</span></label></div></div>
+<div class="field"><label for="pnl">PnL ($) — profit positif, loss negatif</label><input id="pnl" type="number" step="0.01" placeholder="Contoh: 12.50 atau -5.00" required></div>
+<div class="field"><label for="tf">Timeframe</label><select id="tf"><option>M1</option><option>M5</option><option>M15</option><option selected>H1</option><option>H4</option><option>D1</option><option>W1</option></select></div>
+<div class="field"><label for="setup">Setup / alasan entry</label><input id="setup" placeholder="Contoh: BOS + pullback Fib 50"></div>
+<div class="field"><label for="notes">Catatan evaluasi</label><textarea id="notes" placeholder="Apakah entry sesuai rencana? Apa yang bisa diperbaiki?"></textarea></div>
+<button class="primary" type="submit">Simpan trade</button>
+</form>
+</section>
+<section class="panel">
+<h2>Checklist disiplin</h2><p class="hint">Centang yang benar-benar kamu lakukan hari ini.</p>
+<div class="checks" id="checks">
+<label><input type="checkbox" value="plan"> Saya punya trading plan sebelum entry</label>
+<label><input type="checkbox" value="risk"> Risiko sesuai batas yang ditentukan</label>
+<label><input type="checkbox" value="setup"> Entry sesuai setup, bukan FOMO</label>
+<label><input type="checkbox" value="sl"> Memasang SL dan tidak menggesernya sembarangan</label>
+<label><input type="checkbox" value="journal"> Saya mencatat dan mengevaluasi trade</label>
+</div>
+<div class="btnrow"><button class="secondary" id="saveChecks" type="button">Simpan checklist</button><button class="secondary" id="resetChecks" type="button">Reset centang</button></div>
+<hr style="border:0;border-top:1px solid #292929;margin:20px 0">
+<h2>Data & cadangan</h2><p class="hint">Unduh data supaya jurnal tidak hilang jika browser dibersihkan atau ganti perangkat.</p>
+<div class="btnrow"><button class="secondary" id="exportCsv" type="button">Ekspor CSV</button><button class="secondary" id="backup" type="button">Backup JSON</button></div>
+<div class="field"><label for="restoreFile">Pulihkan backup JSON</label><input id="restoreFile" type="file" accept=".json,application/json"></div>
+<p class="hint" style="font-size:12px">Privasi: data disimpan secara lokal di browser, bukan dikirim ke server. Ekspor backup secara berkala.</p>
+</section>
+</div>
+<div class="toolbar"><input id="search" placeholder="Cari pair, setup, catatan..."><select id="filter"><option value="all">Semua hasil</option><option value="TP">TP saja</option><option value="SL">SL saja</option></select><button class="secondary" id="clearAll" type="button">Hapus semua</button></div>
+<section class="panel"><div class="section-title"><h2>Riwayat trade</h2><span class="pill" id="countLabel">0 trade</span></div><div id="trades"><div class="empty">Belum ada trade. Isi form di atas untuk mulai.</div></div></section>
+<div class="foot">TradeLog gratis · Simpan backup sebelum menghapus data browser.</div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const today=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+$('date').value=today();
+let trades=[];try{trades=JSON.parse(localStorage.getItem('tradelog_trades_v1')||'[]')}catch(e){trades=[]}
+const checksKey='tradelog_checks_v1';
+function saveTrades(){localStorage.setItem('tradelog_trades_v1',JSON.stringify(trades))}
+function loadChecks(){let c={};try{c=JSON.parse(localStorage.getItem(checksKey)||'{}')}catch(e){};document.querySelectorAll('#checks input').forEach(x=>x.checked=!!c[x.value]);}
+function saveChecks(){const c={};document.querySelectorAll('#checks input').forEach(x=>c[x.value]=x.checked);localStorage.setItem(checksKey,JSON.stringify(c));renderStats()}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function money(n){return (n<0?'-$':'$')+Math.abs(n).toFixed(2)}
+function renderStats(){const total=trades.length,wins=trades.filter(t=>t.result==='TP').length,pnl=trades.reduce((a,t)=>a+Number(t.pnl||0),0);$('sTotal').textContent=total;$('sWin').textContent=(total?Math.round(wins/total*100):0)+'%';$('sPnl').textContent=money(pnl);$('sPnl').className=pnl>0?'positive':pnl<0?'negative':'';let c={};try{c=JSON.parse(localStorage.getItem(checksKey)||'{}')}catch(e){};const done=Object.values(c).filter(Boolean).length;$('sDis').textContent=done+'/5'}
+function renderTrades(){const q=$('search').value.toLowerCase(),f=$('filter').value;const arr=trades.filter(t=>(f==='all'||t.result===f)&&[t.pair,t.setup,t.notes,t.session,t.direction].join(' ').toLowerCase().includes(q)).slice().reverse();$('countLabel').textContent=arr.length+' trade'+(arr.length===1?'':'s');if(!arr.length){$('trades').innerHTML='<div class="empty">Tidak ada trade yang cocok.</div>';return}
+$('trades').innerHTML=arr.map(t=>`<article class="trade"><div class="tradehead"><div><strong>${esc(t.pair.toUpperCase())}</strong> <span class="pill">${esc(t.direction)}</span> <span class="pill">${esc(t.session)}</span><div class="meta">${esc(t.date)} · ${esc(t.tf)} · ${esc(t.setup||'Tanpa setup')}</div></div><div style="text-align:right"><span class="pill ${t.result==='TP'?'tp':'sl'}">${esc(t.result)}</span><div class="${Number(t.pnl)>=0?'positive':'negative'}" style="font-weight:800;margin-top:6px">${money(Number(t.pnl))}</div></div></div>${t.notes?`<p>${esc(t.notes)}</p>`:''}<div class="btnrow"><button class="danger" type="button" onclick="deleteTrade('${t.id}')">Hapus trade</button></div></article>`).join('')}
+function render(){renderStats();renderTrades()}
+$('tradeForm').addEventListener('submit',e=>{e.preventDefault();const t={id:Date.now().toString(36)+Math.random().toString(36).slice(2,7),date:$('date').value,pair:$('pair').value.trim(),direction:document.querySelector('[name=direction]:checked').value,session:document.querySelector('[name=session]:checked').value,result:document.querySelector('[name=result]:checked').value,pnl:Number($('pnl').value),tf:$('tf').value,setup:$('setup').value.trim(),notes:$('notes').value.trim()};trades.push(t);saveTrades();render();$('pnl').value='';$('setup').value='';$('notes').value='';});
+window.deleteTrade=id=>{if(confirm('Hapus trade ini?')){trades=trades.filter(t=>t.id!==id);saveTrades();render()}};
+$('saveChecks').onclick=()=>{saveChecks();alert('Checklist tersimpan di perangkat ini.')};
+$('resetChecks').onclick=()=>{if(confirm('Kosongkan semua centang hari ini?')){document.querySelectorAll('#checks input').forEach(x=>x.checked=false);saveChecks()}};
+$('search').addEventListener('input',renderTrades);$('filter').addEventListener('change',renderTrades);
+function download(name,content,type){const blob=new Blob([content],{type});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+$('exportCsv').onclick=()=>{const cols=['date','pair','direction','session','result','pnl','tf','setup','notes'];const cell=v=>'"'+String(v??'').replace(/"/g,'""')+'"';download('tradelog-trades.csv',[cols.join(','),...trades.map(t=>cols.map(k=>cell(t[k])).join(','))].join('\r\n'),'text/csv;charset=utf-8;')};
+$('backup').onclick=()=>download('tradelog-backup.json',JSON.stringify({trades,checks:JSON.parse(localStorage.getItem(checksKey)||'{}')},null,2),'application/json');
+$('restoreFile').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{const data=JSON.parse(await file.text());if(!Array.isArray(data.trades))throw Error('Format tidak valid');if(!confirm('Pulihkan backup? Trade yang ada sekarang akan diganti.'))return;trades=data.trades;saveTrades();if(data.checks)localStorage.setItem(checksKey,JSON.stringify(data.checks));loadChecks();render();alert('Backup berhasil dipulihkan.')}catch(err){alert('File backup tidak valid.')}e.target.value=''});
+$('clearAll').onclick=()=>{if(confirm('Yakin hapus SEMUA riwayat trade? Sebaiknya unduh backup dulu.')){trades=[];saveTrades();render()}};
+loadChecks();render();
+</script>
+</body>
+</html>
